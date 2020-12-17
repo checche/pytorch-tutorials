@@ -20,3 +20,18 @@ tensors.fit_np()
 
 # %%
 tensors.fit_tensor()
+# %% [markdown]
+# ## Autograd
+# グラフのノード　-> Tensor
+# グラフのエッジ -> 入力テンソルから出力テンソルを生成する関数
+# 自動微分によって微分を手計算で定義する必要がなくなる。
+# %%
+autograd.fit_autograd()
+# %% [markdown]
+# ### 新しい自動微分関数の定義
+# autograd演算子は内部的には2つの関数でできている(forward, backward)
+# - foward: 入力テンソルから出力テンソルを計算。
+# - backward: あるスカラー値に関する出力テンソルの勾配を受け取り、
+# 同じスカラー値に関する入力テンソルの勾配を計算する。
+# %%
+autograd.fit_legendre()
