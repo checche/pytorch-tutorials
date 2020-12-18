@@ -27,7 +27,7 @@ def fit_autograd():
 
         # 自動微分をする。
         # requires_grad=Trueのテンソルに関するloss関数の勾配を計算する。
-        # a.gradはaに関するloss関数の勾配を補s持するテンソルになる。
+        # a.gradはaに関するloss関数の勾配を補持するテンソルになる。
         loss.backward()
 
         # 手動で重み更新するためにtorch.no_grad()でくるんでいる。
