@@ -1,8 +1,10 @@
 import math
 
+from IPython.display import display
 import torch
 from torch import nn
 import torch.nn.functional as F
+from torch import optim
 
 import dataset
 
@@ -21,15 +23,20 @@ class ScratchLogSoftMax():
          self.x_valid,
          self.y_valid) = dataset.make_dataset()
         self.n, self.c = self.x_train.shape
-        self.model = Mnist_Logistic()
         self.loss_func = F.cross_entropy
+        self.lr = 0.5
 
     def accuracy(self, out, yb):
         preds = torch.argmax(out, dim=1)
         return (preds == yb).float().mean()
 
+    def get_model(self):
+        model = Mnist_Logistic()
+        return model, optim.SGD(model.parameters(), lr=self.lr)
+
     def fit(self):
-        lr = 0.5
+        model, opt = self.get_model()
+        display(self.loss_func(model(self.x_train), self.y_train))
         epochs = 2
         for epoch in range(epochs):
             for i in range((self.n - 1) // self.bs + 1):  # ミニバッチごとに処理
@@ -37,14 +44,14 @@ class ScratchLogSoftMax():
                 end_i = start_i + self.bs
                 xb = self.x_train[start_i:end_i]
                 yb = self.y_train[start_i:end_i]
-                pred = self.model(xb)
+                pred = model(xb)
                 loss = self.loss_func(pred, yb)
 
                 loss.backward()
-                with torch.no_grad():
-                    for p in self.model.parameters():
-                        p -= p.grad * lr
-                    self.model.zero_grad()
+                opt.step()
+                opt.zero_grad()
+
+        display(self.loss_func(model(self.x_train), self.y_train))
 
 
 class Mnist_Logistic(nn.Module):

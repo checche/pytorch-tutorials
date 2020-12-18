@@ -4,6 +4,12 @@ from IPython.display import display
 import dataset
 import models
 
+# Load the "autoreload" extension so that code can change
+%load_ext autoreload
+
+# always reload modules so that as you change code in src, it gets loaded
+%autoreload 2
+
 # %% [markdown]
 # ## MNIST data setup
 # %%
@@ -24,10 +30,4 @@ my_model = models.ScratchLogSoftMax()
 
 # %%
 my_model.fit()
-# %%
-out = my_model.model(x_valid)
-display(
-    my_model.loss_func(out, y_valid),
-    my_model.accuracy(out, y_valid)
-)
 # %%
