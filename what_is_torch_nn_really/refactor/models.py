@@ -3,8 +3,9 @@ import math
 from IPython.display import display
 import torch
 from torch import nn
-import torch.nn.functional as F
 from torch import optim
+import torch.nn.functional as F
+from torch.utils.data import TensorDataset
 
 import dataset
 
@@ -32,12 +33,11 @@ class ScratchLogSoftMax():
     def fit(self):
         model, opt = self.get_model()
         epochs = 2
+        # TensorDatasetでデータセットを扱いやすくできる。
+        train_ds = TensorDataset(self.x_train, self.y_train)
         for epoch in range(epochs):
             for i in range((self.n - 1) // self.bs + 1):  # ミニバッチごとに処理
-                start_i = i * self.bs
-                end_i = start_i + self.bs
-                xb = self.x_train[start_i:end_i]
-                yb = self.y_train[start_i:end_i]
+                xb, yb = train_ds[i * self.bs: i * self.bs + self.bs]
                 pred = model(xb)
                 loss = self.loss_func(pred, yb)
 
@@ -45,7 +45,7 @@ class ScratchLogSoftMax():
                 opt.step()
                 opt.zero_grad()
 
-        display(self.loss_func(model(self.x_train), self.y_train))
+        display(self.loss_func(model(xb), yb))
 
 
 class Mnist_Logistic(nn.Module):
