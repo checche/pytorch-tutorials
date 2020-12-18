@@ -11,11 +11,6 @@ import dataset
 
 class ScratchLogSoftMax():
     def __init__(self):
-        # initializing the weights here with Xavier initialisation
-        # (by multiplying with 1/sqrt(n)).
-        self.weights = torch.randn(784, 10) / math.sqrt(784)
-        self.weights.requires_grad_()
-        self.bias = torch.zeros(10, requires_grad=True)
         self.bs = 64
 
         (self.x_train,
@@ -36,7 +31,6 @@ class ScratchLogSoftMax():
 
     def fit(self):
         model, opt = self.get_model()
-        display(self.loss_func(model(self.x_train), self.y_train))
         epochs = 2
         for epoch in range(epochs):
             for i in range((self.n - 1) // self.bs + 1):  # ミニバッチごとに処理
