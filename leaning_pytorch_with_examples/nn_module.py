@@ -50,8 +50,11 @@ def fit_nn():
     linear_layer = model[0]
 
     # For linear layer, its parameters are stored as `weight` and `bias`.
-    print(
-        f'Result: y = {linear_layer.bias.item()} + {linear_layer.weight[:, 0].item()} x + {linear_layer.weight[:, 1].item()} x^2 + {linear_layer.weight[:, 2].item()} x^3')
+    print(f'Result: y = {linear_layer.bias.item()}'
+          f' + {linear_layer.weight[:, 0].item()} x'
+          f' + {linear_layer.weight[:, 1].item()} x^2'
+          f' + {linear_layer.weight[:, 2].item()} x^3'
+          )
 
 
 def fit_optim():
@@ -90,8 +93,11 @@ def fit_optim():
 
     linear_layer = model[0]
 
-    print(
-        f'Result: y = {linear_layer.bias.item()} + {linear_layer.weight[:, 0].item()} x + {linear_layer.weight[:, 1].item()} x^2 + {linear_layer.weight[:, 2].item()} x^3')
+    print(f'Result: y = {linear_layer.bias.item()}'
+          f' + {linear_layer.weight[:, 0].item()} x'
+          f' + {linear_layer.weight[:, 1].item()} x^2'
+          f' + {linear_layer.weight[:, 2].item()} x^3'
+          )
 
 
 class Polynomial3(torch.nn.Module):
@@ -112,7 +118,10 @@ class Polynomial3(torch.nn.Module):
         return self.a + self.b * x + self.c * x ** 2 + self.d * x ** 3
 
     def string(self):
-        return f'y = {self.a.item()} + {self.b.item()} x + {self.c.item()} x^2 + {self.d.item()} x^3'
+        return (f'y = {self.a.item()}'
+                f' + {self.b.item()} x'
+                f' + {self.c.item()} x^2'
+                f' + {self.d.item()} x^3')
 
 
 def fit_custom_nn():
@@ -158,9 +167,16 @@ class DynamicNet(torch.nn.Module):
 
     def string(self):
         """
-        Just like any class in Python, you can also define custom method on PyTorch modules
+        Just like any class in Python,
+        you can also define custom method on PyTorch modules
         """
-        return f'y = {self.a.item()} + {self.b.item()} x + {self.c.item()} x^2 + {self.d.item()} x^3 + {self.e.item()} x^4 ? + {self.e.item()} x^5 ?'
+        return (f'y = {self.a.item()}'
+                f' + {self.b.item()} x'
+                f' + {self.c.item()} x ^ 2'
+                f' + {self.d.item()} x ^ 3'
+                f' + {self.e.item()} x ^ 4 ?'
+                f' + {self.e.item()} x ^ 5 ?'
+                )
 
 
 def fit_control_flow():

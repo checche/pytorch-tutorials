@@ -74,5 +74,7 @@ def fit_tensor():
         c -= learning_rate * grad_c
         d -= learning_rate * grad_d
 
-    print(
-        f'Result: y = {a.item()} + {b.item()} x + {c.item()} x^2 + {d.item()} x^3')
+    print(f'Result: y = {a.item()}'
+          f' + {b.item()} x'
+          f' + {c.item()} x^2'
+          f' + {d.item()} x^3')
