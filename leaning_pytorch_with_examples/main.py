@@ -1,5 +1,6 @@
 # %%
 import autograd
+import nn_module
 import tensors
 
 # Load the "autoreload" extension so that code can change
@@ -38,3 +39,33 @@ autograd.fit_autograd()
 # 同じスカラー値に関する入力テンソルの勾配を計算する。
 # %%
 autograd.fit_legendre()
+
+# %% [markdown]
+# ## nn module
+# ### nn
+# nnパッケージはニューラルネットワークのモデル構築に使う。
+# 損失関数の定義にも使う。
+# nnの入出力はテンソル。nnは内部のパラメータを保持するテンソルを持つ。
+# %%
+nn_module.fit_nn()
+
+# %% [markdown]
+# ### optim
+# torch.no_grad()でパラメータテンソルを手動更新していたが、しんどい。
+# optimパッケージはいろいろ楽に実装できる。
+# %%
+nn_module.fit_optim()
+
+# %% [markdown]
+# ### custom nn modules
+# nn.Moduleをサブクラス化して、forwardを定義することで
+# カスタマイズできる。
+# %%
+nn_module.fit_custom_nn()
+
+# %% [markdown]
+# ### Control Flow + Weight Sharing
+# forwardなどの中に普通にforループとかpythonの制御フローが使える。
+# 同じパラメータを複数回利用すれば重み共有ができる。
+# %%
+nn_module.fit_control_flow()
