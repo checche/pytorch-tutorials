@@ -14,6 +14,7 @@ class ScratchLogSoftMax():
         self.weights.requires_grad_()
         self.bias = torch.zeros(10, requires_grad=True)
         self.bs = 64
+        self.loss_func = F.cross_entropy
 
         (self.x_train,
          self.y_train,
@@ -21,25 +22,9 @@ class ScratchLogSoftMax():
          self.y_valid) = dataset.make_dataset()
         self.n, self.c = self.x_train.shape
 
-    def log_softmax(self, x):
-        """"
-        活性化関数
-        値域は(-inf, 0)
-        0に近づくほどソフトマックスの結果は1に近い
-        """
-        return x - x.exp().sum(-1).log().unsqueeze(-1)
-
     def model(self, xb):
         # @ はドット積の演算子
-        return self.log_softmax(xb @ self.weights + self.bias)
-
-    def nll(self, input, target):
-        # 負の対数尤度関数 値域 [0, inf)
-        # 各予測値から正解ラベルのlog_softmax値を取得し、
-        # その平均を取ることで尤度をだす。
-        # 完全に正確な予測ができていればnllは0になる
-        # 平均値が大きいほど
-        return -input[range(target.shape[0]), target].mean()
+        return xb @ self.weights + self.bias
 
     def accuracy(self, out, yb):
         preds = torch.argmax(out, dim=1)
@@ -55,7 +40,7 @@ class ScratchLogSoftMax():
                 xb = self.x_train[start_i:end_i]
                 yb = self.y_train[start_i:end_i]
                 pred = self.model(xb)
-                loss_func = self.nll
+                loss_func = self.loss_func
                 loss = loss_func(pred, yb)
 
                 loss.backward()
