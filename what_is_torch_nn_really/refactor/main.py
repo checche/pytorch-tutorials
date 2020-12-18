@@ -23,7 +23,7 @@ display(
 my_model = models.ScratchLogSoftMax()
 
 # %%
-my_model.train()
+my_model.fit()
 # %%
 out = my_model.model(x_valid)
 display(
