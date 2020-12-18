@@ -4,13 +4,6 @@ from IPython.display import display
 import dataset
 import models
 
-
-# Load the "autoreload" extension so that code can change
-%load_ext autoreload
-
-# always reload modules so that as you change code in src, it gets loaded
-%autoreload 2
-
 # %% [markdown]
 # ## MNIST data setup
 # %%
@@ -45,7 +38,7 @@ preds.shape
 # %%
 my_model.accuracy(preds, yb)
 # %%
-xb, yb = my_model.train()
+my_model.train()
 # %%
 out = my_model.model(x_valid)
 display(

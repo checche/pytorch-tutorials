@@ -1,14 +1,7 @@
-# flake8: noqa
 # %%
 import autograd
 import nn_module
 import tensors
-
-# Load the "autoreload" extension so that code can change
-%load_ext autoreload
-
-# always reload modules so that as you change code in src, it gets loaded
-%autoreload 2
 
 # %% [markdown]
 # ## Tensors

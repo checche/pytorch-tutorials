@@ -14,7 +14,10 @@ class ScratchLogSoftMax():
         self.bias = torch.zeros(10, requires_grad=True)
         self.bs = 64
 
-        self.x_train, self.y_train, self.x_valid, self.y_valid = dataset.make_dataset()
+        (self.x_train,
+         self.y_train,
+         self.x_valid,
+         self.y_valid) = dataset.make_dataset()
         self.n, self.c = self.x_train.shape
 
     def log_softmax(self, x):
