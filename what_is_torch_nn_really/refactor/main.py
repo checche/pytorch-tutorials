@@ -2,6 +2,7 @@
 from IPython.display import display
 
 import dataset
+import generic_image_cnn
 import models
 
 # Load the "autoreload" extension so that code can change
@@ -40,4 +41,10 @@ my_cnn_model.run()
 my_sequential_model = models.LearningSequential()
 # %%
 my_sequential_model.run()
+# %%
+my_generic_cnn = generic_image_cnn.GenericImageCNN()
+
+# %%
+my_generic_cnn.run()
+
 # %%

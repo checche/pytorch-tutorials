@@ -7,6 +7,8 @@ from IPython.display import display
 import matplotlib.pyplot as plt
 import requests
 import torch
+from torch.utils.data import TensorDataset
+from torch.utils.data import DataLoader
 
 
 DATA_PATH = Path('data')
@@ -31,3 +33,20 @@ def make_dataset():
         torch.tensor, (x_train, y_train, x_valid, y_valid)
     )
     return x_train, y_train, x_valid, y_valid
+
+
+def get_data(train_ds, valid_ds, bs):
+    return (
+        DataLoader(train_ds, batch_size=bs, shuffle=True),
+        DataLoader(valid_ds, batch_size=bs*2)
+    )
+
+
+def get_data_loader(bs):
+    """訓練/検証のDataLoaderを返す"""
+    x_train, y_train, x_valid, y_valid = make_dataset()
+    train_ds = TensorDataset(x_train, y_train)
+    valid_ds = TensorDataset(x_valid, y_valid)
+    train_dl, valid_dl = get_data(train_ds, valid_ds, bs)
+
+    return train_dl, valid_dl
