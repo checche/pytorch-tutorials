@@ -31,3 +31,9 @@ my_model = models.ScratchLogSoftMax()
 # %%
 my_model.run()
 # %%
+my_cnn_model = models.LearningCNN()
+
+# %%
+my_cnn_model.run()
+
+# %%
