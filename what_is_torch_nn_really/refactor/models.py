@@ -38,7 +38,16 @@ class ScratchLogSoftMax():
         train_ds = TensorDataset(self.x_train, self.y_train)
         # DataLoaderはバッチの管理を行う。自動的にミニバッチをイテレーションできる。
         train_dl = DataLoader(train_ds, batch_size=self.bs)
+
+        valid_ds = TensorDataset(self.x_valid, self.y_valid)
+        # 逆伝播をしないためメモリに余裕ができるので、バッチサイズを大きくした。
+        # バッチ数を減らせば高速化できる。
+        # バッチ数に関してメモリと速度にトレードオフがある。
+        valid_dl = DataLoader(valid_ds, batch_size=self.bs * 2)
         for epoch in range(epochs):
+            # これらのさまざまなフェーズで適切な動作を保証するために
+            # 訓練前に呼び出す。
+            model.train()
             for xb, yb in train_dl:
                 pred = model(xb)
                 loss = self.loss_func(pred, yb)
@@ -47,6 +56,16 @@ class ScratchLogSoftMax():
                 opt.step()
                 opt.zero_grad()
 
+            # これらのさまざまなフェーズで適切な動作を保証するために
+            # 推論前に呼び出す。
+            model.eval()
+            with torch.no_grad():
+                # (10000//128 + 1 =) 79回lossを足し合わせている。
+                valid_loss = sum(self.loss_func(model(xb), yb)
+                                 for xb, yb in valid_dl)
+
+            # epochごとにvalidation dataでlossの計算
+            display(epoch, valid_loss / len(valid_dl))
         display(self.loss_func(model(xb), yb))
 
 
