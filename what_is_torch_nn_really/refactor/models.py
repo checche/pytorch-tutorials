@@ -15,14 +15,15 @@ import dataset
 class ScratchLogSoftMax():
     def __init__(self):
         self.bs = 64
-
+        self.epochs = 2
         (self.x_train,
          self.y_train,
          self.x_valid,
          self.y_valid) = dataset.make_dataset()
         self.n, self.c = self.x_train.shape
-        self.loss_func = F.cross_entropy
         self.lr = 0.5
+        self.model, self.opt = self.get_model()
+        self.loss_func = F.cross_entropy
 
     def accuracy(self, out, yb):
         preds = torch.argmax(out, dim=1)
@@ -46,39 +47,48 @@ class ScratchLogSoftMax():
 
         return loss.item(), len(xb)
 
-    def fit(self):
-        model, opt = self.get_model()
-        epochs = 2
-        # TensorDatasetでデータセットを扱いやすくできる。
-        train_ds = TensorDataset(self.x_train, self.y_train)
-        # DataLoaderはバッチの管理を行う。自動的にミニバッチをイテレーションできる。
-        train_dl = DataLoader(train_ds, batch_size=self.bs)
+    def get_data(self, train_ds, valid_ds, bs):
+        return (
+            # DataLoaderはバッチの管理を行う。自動的にミニバッチをイテレーションできる。
+            DataLoader(train_ds, batch_size=bs, shuffle=True),
+            # 逆伝播をしないためメモリに余裕ができるので、バッチサイズを大きくした。
+            # バッチ数を減らせば高速化できる。
+            # バッチ数に関してメモリと速度にトレードオフがある。
+            DataLoader(valid_ds, batch_size=bs*2)
+        )
 
-        valid_ds = TensorDataset(self.x_valid, self.y_valid)
-        # 逆伝播をしないためメモリに余裕ができるので、バッチサイズを大きくした。
-        # バッチ数を減らせば高速化できる。
-        # バッチ数に関してメモリと速度にトレードオフがある。
-        valid_dl = DataLoader(valid_ds, batch_size=self.bs * 2)
+    def fit(self, epochs, model, loss_func, opt, train_dl, valid_dl):
         for epoch in range(epochs):
             # これらのさまざまなフェーズで適切な動作を保証するために
             # 訓練前に呼び出す。
             model.train()
             for xb, yb in train_dl:
-                self.loss_batch(model, self.loss_func, xb, yb, opt)
+                self.loss_batch(model, loss_func, xb, yb, opt)
 
             # これらのさまざまなフェーズで適切な動作を保証するために
             # 推論前に呼び出す。
             model.eval()
             with torch.no_grad():
                 losses, nums = zip(
-                    *[self.loss_batch(model, self.loss_func, xb, yb)
+                    *[self.loss_batch(model, loss_func, xb, yb)
                       for xb, yb in valid_dl]
                 )
 
+            # データ1つあたりの平均lossを算出する。
             valid_loss = np.sum(np.multiply(losses, nums)) / np.sum(nums)
 
             # epochごとにvalidation dataでlossの計算
-            display(epoch, valid_loss)
+            print(epoch, valid_loss)
+
+    def run(self):
+        # TensorDatasetでデータセットを扱いやすくできる。
+        train_ds = TensorDataset(self.x_train, self.y_train)
+        valid_ds = TensorDataset(self.x_valid, self.y_valid)
+
+        train_dl, valid_dl = self.get_data(train_ds, valid_ds, self.bs)
+
+        self.fit(self.epochs, self.model, self.loss_func,
+                 self.opt, train_dl, valid_dl)
 
 
 class Mnist_Logistic(nn.Module):

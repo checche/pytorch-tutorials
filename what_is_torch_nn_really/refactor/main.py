@@ -29,5 +29,5 @@ display(
 my_model = models.ScratchLogSoftMax()
 
 # %%
-my_model.fit()
+my_model.run()
 # %%
