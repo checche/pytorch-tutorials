@@ -1,6 +1,7 @@
 import math
 
 from IPython.display import display
+import numpy as np
 import torch
 from torch import nn
 from torch import optim
@@ -31,6 +32,20 @@ class ScratchLogSoftMax():
         model = Mnist_Logistic()
         return model, optim.SGD(model.parameters(), lr=self.lr)
 
+    def loss_batch(self, model, loss_func, xb, yb, opt=None):
+        """
+        損失関数の計算処理をする関数
+        trainingかvalidationかによってoptimizerを呼び出すか分岐している。
+        """
+        loss = loss_func(model(xb), yb)
+
+        if opt is not None:
+            loss.backward()
+            opt.step()
+            opt.zero_grad()
+
+        return loss.item(), len(xb)
+
     def fit(self):
         model, opt = self.get_model()
         epochs = 2
@@ -49,24 +64,21 @@ class ScratchLogSoftMax():
             # 訓練前に呼び出す。
             model.train()
             for xb, yb in train_dl:
-                pred = model(xb)
-                loss = self.loss_func(pred, yb)
-
-                loss.backward()
-                opt.step()
-                opt.zero_grad()
+                self.loss_batch(model, self.loss_func, xb, yb, opt)
 
             # これらのさまざまなフェーズで適切な動作を保証するために
             # 推論前に呼び出す。
             model.eval()
             with torch.no_grad():
-                # (10000//128 + 1 =) 79回lossを足し合わせている。
-                valid_loss = sum(self.loss_func(model(xb), yb)
-                                 for xb, yb in valid_dl)
+                losses, nums = zip(
+                    *[self.loss_batch(model, self.loss_func, xb, yb)
+                      for xb, yb in valid_dl]
+                )
+
+            valid_loss = np.sum(np.multiply(losses, nums)) / np.sum(nums)
 
             # epochごとにvalidation dataでlossの計算
-            display(epoch, valid_loss / len(valid_dl))
-        display(self.loss_func(model(xb), yb))
+            display(epoch, valid_loss)
 
 
 class Mnist_Logistic(nn.Module):
