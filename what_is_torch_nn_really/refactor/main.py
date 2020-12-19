@@ -37,3 +37,7 @@ my_cnn_model = models.LearningCNN()
 my_cnn_model.run()
 
 # %%
+my_sequential_model = models.LearningSequential()
+# %%
+my_sequential_model.run()
+# %%
