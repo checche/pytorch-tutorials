@@ -1,3 +1,4 @@
+# flake8: noqa
 # %%
 from IPython.display import display
 

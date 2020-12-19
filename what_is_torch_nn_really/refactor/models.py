@@ -1,6 +1,5 @@
 import math
 
-from IPython.display import display
 import numpy as np
 import torch
 from torch import nn

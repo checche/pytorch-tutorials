@@ -3,8 +3,6 @@ import gzip
 from pathlib import Path
 import pickle
 
-from IPython.display import display
-import matplotlib.pyplot as plt
 import requests
 import torch
 from torch.utils.data import TensorDataset
