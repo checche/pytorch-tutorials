@@ -6,6 +6,7 @@ from torch import nn
 from torch import optim
 import torch.nn.functional as F
 from torch.utils.data import TensorDataset
+from torch.utils.data import DataLoader
 
 import dataset
 
@@ -35,9 +36,10 @@ class ScratchLogSoftMax():
         epochs = 2
         # TensorDatasetでデータセットを扱いやすくできる。
         train_ds = TensorDataset(self.x_train, self.y_train)
+        # DataLoaderはバッチの管理を行う。自動的にミニバッチをイテレーションできる。
+        train_dl = DataLoader(train_ds, batch_size=self.bs)
         for epoch in range(epochs):
-            for i in range((self.n - 1) // self.bs + 1):  # ミニバッチごとに処理
-                xb, yb = train_ds[i * self.bs: i * self.bs + self.bs]
+            for xb, yb in train_dl:
                 pred = model(xb)
                 loss = self.loss_func(pred, yb)
 
