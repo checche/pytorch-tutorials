@@ -88,10 +88,21 @@ class GenericImageCNN:
                     *[self.loss_batch(model, loss_func, xb, yb)
                       for xb, yb in valid_dl]
                 )
+                accuracies, nums_acc = zip(
+                    *[self.accuracy(model(xb), yb)
+                      for xb, yb in valid_dl]
+                )
 
             valid_loss = np.sum(np.multiply(losses, nums)) / np.sum(nums)
+            accuracy = np.sum(np.multiply(
+                accuracies, nums_acc)) / np.sum(nums_acc)
 
-            print(epoch, valid_loss)
+            print('epoch:', epoch, 'validloss:',
+                  valid_loss, 'valid accuracy:', accuracy)
+
+    def accuracy(self, out, yb):
+        preds = torch.argmax(out, dim=1)
+        return (preds == yb).float().mean(), len(yb)
 
     def run(self):
         train_dl, valid_dl = dataset.get_data_loader(self.bs)
