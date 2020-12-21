@@ -17,6 +17,7 @@ plotly = "*"
 torch = "*"
 torchvision = "*"
 requests = "*"
+tensorboard = "*"
 
 [requires]
 python_version = "3.8"
