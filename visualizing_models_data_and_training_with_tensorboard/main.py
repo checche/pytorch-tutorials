@@ -55,3 +55,10 @@ dataset.matplotlib_imshow(img_grid, one_channel=True)
 writer.add_image('four_fashion_mnist_images', img_grid)
 # %% [markdown]
 # ターミナルでこちらを実行`tensorboard --logdir=runs`
+# %% [markdown]
+# ## TensorBoardでモデルをよく見てみる
+# %%
+# グラフを描画できる
+writer.add_graph(net, images)
+writer.close()
+# %%
