@@ -1,8 +1,10 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import torch
 import torchvision
 import torchvision.transforms as transforms
+
+
+classes = ('T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
+           'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle Boot')
 
 
 def get_dataset():
@@ -46,13 +48,11 @@ def get_dataloader():
     return trainloader, testloader
 
 
-def matplotlib_imshow(img, one_channel=False):
-    if one_channel:
-        img = img.mean(dim=0)
+def select_n_random(data, labels, n=100):
+    """
+    ランダムにn個のデータ点とそのラベルを選択
+    """
+    assert len(data) == len(labels)
 
-    img = img / 2 + 0.5
-    npimg = img.numpy()
-    if one_channel:
-        plt.imshow(npimg, cmap="Greys")
-    else:
-        plt.imshow(np.transpose(npimg, (1, 2, 0)))
+    perm = torch.randperm(len(data))
+    return data[perm][:n], labels[perm][:n]

@@ -15,15 +15,13 @@ from torch.utils.tensorboard import SummaryWriter
 
 import dataset
 import models
+import plot
 
 # Load the "autoreload" extension so that code can change
 %load_ext autoreload
 
 # always reload modules so that as you change code in src, it gets loaded
 %autoreload 2
-
-# Load the TensorBoard notebook extension
-%load_ext tensorboard
 # %%
 trainloader, testloader = dataset.get_dataloader()
 classes = ('T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
@@ -51,7 +49,7 @@ images, labels = dataiter.next()
 
 img_grid = torchvision.utils.make_grid(images)
 
-dataset.matplotlib_imshow(img_grid, one_channel=True)
+plot.matplotlib_imshow(img_grid, one_channel=True)
 writer.add_image('four_fashion_mnist_images', img_grid)
 # %% [markdown]
 # ターミナルでこちらを実行`tensorboard --logdir=runs`
@@ -60,5 +58,25 @@ writer.add_image('four_fashion_mnist_images', img_grid)
 # %%
 # グラフを描画できる
 writer.add_graph(net, images)
+writer.close()
+
+# %% [markdown]
+# ## Adding a "Projector" to TensorBoard
+# add_embedding methodで方次元のデータを低次元にして可視化できる
+# %%
+trainset, testset = dataset.get_dataset()
+# ランダムに画像とそのラベル番号を取得
+images, labels = dataset.select_n_random(trainset.data, trainset.targets)
+
+# 各画像のクラスラベルを取得
+class_labels = [classes[lab] for lab in labels]
+
+features = images.view(-1, 28 * 28)
+writer.add_embedding(
+    features,
+    metadata=class_labels,
+    label_img=images.unsqueeze(1)  # 指定した位置にサイズ1の新しい次元を追加したテンソルを返す
+)
+
 writer.close()
 # %%
