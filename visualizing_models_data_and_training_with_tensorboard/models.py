@@ -1,3 +1,5 @@
+import numpy as np
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -20,3 +22,16 @@ class Net(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
+
+
+def images_to_probs(net, images):
+    """ラベルの予測とその確率を出力(size: batch_size)
+    F.softmax(el, dim=0) -> 出力(size:10)に
+    ソフトマックスを適用して得られた確率(size:10)が得られる。
+    """
+    output = net(images)
+    # 最大値とそのidxが得られる
+    _, preds_tensor = torch.max(output, 1)
+    preds = np.squeeze(preds_tensor.numpy())  # squeeze: サイズ1に次元を取り除く(次元を絞る)
+    return preds, [F.softmax(el, dim=0)[i].item()
+                   for i, el in zip(preds, output)]

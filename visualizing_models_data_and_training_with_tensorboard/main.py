@@ -109,4 +109,28 @@ for epoch in range(1):
             running_loss = 0.0
 print('Finished Traing')
 
+# %% [markdown]
+# ## TensorBoardで訓練済みモデルの評価をする
+
 # %%
+# バッチごとのソフトマックスの結果の配列
+class_probs = []
+# バッチごとの予測結果の配列
+class_preds = []
+with torch.no_grad():
+    for data in testloader:
+        images, labels = data
+        output = net(images)
+        class_probs_batch = [F.softmax(el, dim=0) for el in output]
+        _, class_preds_batch = torch.max(output, 1)
+
+        class_probs.append(class_probs_batch)
+        class_preds.append(class_preds_batch)
+
+# 各テストデータのprobs(size: num_data, num_class), preds(size: num_data)の並べたもの
+test_probs = torch.cat([torch.stack(batch) for batch in class_probs])
+test_preds = torch.cat(class_preds)
+
+# %%
+for i in range(len(classes)):
+    plot.add_pr_curve_tensorboard(writer, i, test_probs, test_preds)
