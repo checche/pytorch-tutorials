@@ -79,4 +79,34 @@ writer.add_embedding(
 )
 
 writer.close()
+# %% [markdown]
+# ## TensorBoardでモデルのトレーニングを追跡する。
+# plot_classes_preds関数を介してモデルが行っている予測のビューとともに、
+# 実行中の損失をTensorBoardに記録します
+
+# %%
+running_loss = 0.0
+for epoch in range(1):
+    for i, data in enumerate(trainloader, 0):
+        inputs, labels = data
+
+        optimizer.zero_grad()
+
+        outputs = net(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        running_loss += loss.item()
+        if i % 1000 == 999:
+            # 1000回の平均ロスを追加
+            writer.add_scalar('training loss',
+                              running_loss / 1000,
+                              epoch * len(trainloader) + i)
+            writer.add_figure('predictions vs. actuals',
+                              plot.plot_classes_preds(net, inputs, labels),
+                              global_step=epoch * len(trainloader) + i)
+            running_loss = 0.0
+print('Finished Traing')
+
 # %%
