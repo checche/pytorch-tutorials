@@ -34,3 +34,11 @@ plots.im_batch_show()
 # %%[markdown]
 # ## Visualzing the model predictions
 # plots.visualize_modelを参照
+# %%[markdown]
+# ## Finetuning the convnet
+# %%
+# CPUだと15-25分
+# GPUだと1分以内で終わる。
+model_ft = models.finetuning()
+# %%
+plots.visualize_model(model_ft)
