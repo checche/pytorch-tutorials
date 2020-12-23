@@ -42,3 +42,15 @@ plots.im_batch_show()
 model_ft = models.finetuning()
 # %%
 plots.visualize_model(model_ft)
+
+# %% [markdown]
+# Conv Netを特徴抽出機として使う
+# 最後の全結合層を除く全てのネットワークのパラメータを固定する。
+# 固定にはrequires_grad=Falseを使う。
+# %%
+model_conv = models.fixed_feature_extractor()
+
+# %%
+plots.visualize_model(model_ft)
+
+# %%
