@@ -121,6 +121,8 @@ def fixed_feature_extractor():
     for param in model_conv.parameters():
         param.requires_grad = False
 
+    # fc = fully connected = 全結合層
+    # in_features = 入力数(入力の特徴量)
     num_ftrs = model_conv.fc.in_features
     model_conv.fc = nn.Linear(num_ftrs, 2)
 
