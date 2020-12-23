@@ -24,3 +24,7 @@ import plots
 # しかしこれではスクラッチでに実装だとデータ数が不足している。
 # 転移学習(ファインチューニング)を使用して効率的にモデルを汎化させられる。
 
+# %%[markdwon]
+# ## visualize a few images
+# %%
+plots.im_batch_show()
