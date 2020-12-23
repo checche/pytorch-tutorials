@@ -28,3 +28,9 @@ import plots
 # ## visualize a few images
 # %%
 plots.im_batch_show()
+# %%[markdown]
+# ## Training the model
+# models.train_modelを参照
+# %%[markdown]
+# ## Visualzing the model predictions
+# plots.visualize_modelを参照
