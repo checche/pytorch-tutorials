@@ -61,7 +61,7 @@ def get_instance_segmentation_model(num_classes):
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
 
     # セグメンテーションマスクの分類器に入力する特徴量を取得
-    in_features_mask = model.roi_heads.mask_predicator.conv5_mask.in_channels
+    in_features_mask = model.roi_heads.mask_predictor.conv5_mask.in_channels
     hidden_layer = 256
 
     model.roi_heads.mask_predictor = MaskRCNNPredictor(in_features_mask,

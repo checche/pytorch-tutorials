@@ -5,6 +5,10 @@ from PIL import Image
 import torch
 import torch.utils.data
 
+import transforms as T
+import utils
+from engine import train_one_epoch, evaluate
+
 
 class PennFudanDataset(torch.utils.data.Dataset):
     def __init__(self, root, transforms=None):
@@ -76,3 +80,20 @@ class PennFudanDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.imgs)
+
+
+def get_transform(train):
+    """
+    Note: 標準化や理スケーリングはMask R-CNNで行われているので
+    この関数に実装しない。
+    """
+    transforms = []
+    # PIL imageをテンソルに変換する
+    transforms.append(T.ToTensor())
+
+    if train:
+        # データオーギュメンテーション
+        # 訓練画像と正解のバウンディングボックスをランダムで水平反転する。
+        transforms.append(T.RandomHorizontalFlip(0.5))
+
+    return T.Compose(transforms)
