@@ -15,8 +15,8 @@ import datasets
 import models
 import plots
 
-%load_ext autoreload
-%autoreload 2
+%load_ext autoreload  # noqa
+%autoreload 2  # noqa
 
 # %%[markdown]
 # ## データの読み込み
@@ -24,7 +24,7 @@ import plots
 # しかしこれではスクラッチでに実装だとデータ数が不足している。
 # 転移学習(ファインチューニング)を使用して効率的にモデルを汎化させられる。
 
-# %%[markdwon]
+# %%[markdown]
 # ## visualize a few images
 # %%
 plots.im_batch_show()
@@ -51,6 +51,6 @@ plots.visualize_model(model_ft)
 model_conv = models.fixed_feature_extractor()
 
 # %%
-plots.visualize_model(model_ft)
+plots.visualize_model(model_conv)
 
 # %%

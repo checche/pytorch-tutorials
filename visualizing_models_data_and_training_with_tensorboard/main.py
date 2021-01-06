@@ -18,10 +18,10 @@ import models
 import plot
 
 # Load the "autoreload" extension so that code can change
-%load_ext autoreload
+%load_ext autoreload  # noqa
 
 # always reload modules so that as you change code in src, it gets loaded
-%autoreload 2
+%autoreload 2  # noqa
 # %%
 trainloader, testloader = dataset.get_dataloader()
 classes = ('T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',

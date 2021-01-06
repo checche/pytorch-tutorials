@@ -1,14 +1,7 @@
 from __future__ import print_function, division
-import copy
-import time
 import os
 
-import matplotlib.pyplot as plt
-import numpy as np
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.optim import lr_scheduler
 import torchvision
 
 # 訓練データにはデータ拡張と正規化
@@ -34,9 +27,9 @@ data_transforms = {
 data_dir = 'data/hymenoptera_data'
 
 
-image_datasets = {x: torchvision.datasets.ImageFolder(os.path.join(data_dir, x),
-                                                      data_transforms[x])
-                  for x in ['train', 'val']}
+image_datasets = {x: torchvision.datasets.ImageFolder(
+    os.path.join(data_dir, x), data_transforms[x]
+) for x in ['train', 'val']}
 
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=4,
                                               shuffle=True, num_workers=0)

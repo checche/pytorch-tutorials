@@ -30,7 +30,7 @@ def visualize_model(model, num_images=6):
     was_training = model.training
     model.eval()
     images_so_far = 0
-    fig = plt.figure()
+    plt.figure()
 
     with torch.no_grad():
         for i, (inputs, labels) in enumerate(datasets.dataloaders['val']):
