@@ -32,7 +32,13 @@
 #   そうしないとすべての画像を読み込んでしまうので遅くなる。
 
 # %%
+from PIL import Image
+import torch
+
 import datasets
+from engine import train_one_epoch, evaluate
+import models
+import utils
 
 # Load the "autoreload" extension so that code can change
 %load_ext autoreload
@@ -61,3 +67,85 @@ dataset[0]
 # 2. モデルのメイン部分(Backbone)を別のモデルに置き換えるとき。
 #
 # models.pyを参照
+# ### An Instance segmentation model for PennFudan Dataset
+# データが少ないのでファインチューニングをする。
+# Mask R-CNNを使用する。
+
+# %% [markdown]
+# ## Training and evaluation functions
+# https://github.com/pytorch/vision/tree/v0.3.0/references/detection
+# ここにいろいろなヘルパーがある。
+
+# %%
+dataset = datasets.PennFudanDataset(
+    './data/PennFudanPed', datasets.get_transform(train=True))
+dataset_test = datasets.PennFudanDataset(
+    './data/PennFudanPed', datasets.get_transform(train=False))
+
+torch.manual_seed(1)
+indices = torch.randperm(len(dataset)).tolist()
+dataset = torch.utils.data.Subset(dataset, indices[:-50])
+dataset_test = torch.utils.data.Subset(dataset_test, indices[:-50])
+
+data_loader = torch.utils.data.DataLoader(
+    dataset, batch_size=2, shuffle=True, num_workers=0,
+    collate_fn=utils.collate_fn
+)
+
+data_loader_test = torch.utils.data.DataLoader(
+    dataset_test, batch_size=2, shuffle=False, num_workers=0,
+    collate_fn=utils.collate_fn
+)
+
+# %%
+device = torch.device(
+    'cuda') if torch.cuda.is_available() else torch.device('cpu')
+
+num_classes = 2
+
+model = models.get_instance_segmentation_model(num_classes)
+
+model.to(device)
+
+
+params = [p for p in model.parameters() if p.requires_grad]
+optimizer = torch.optim.SGD(params, lr=0.005,
+                            momentum=0.9, weight_decay=0.0005)
+
+lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
+                                               step_size=3,
+                                               gamma=0.1)
+
+# %%
+num_epochs = 10
+
+for epoch in range(num_epochs):
+    # print_freq: 1エポック中のprintするまでのイテレーション数
+    # cudaじゃないと動かないっぽい
+    train_one_epoch(model, optimizer, data_loader,
+                    device, epoch, print_freq=10)
+
+    lr_scheduler.step()
+
+    evaluate(model, data_loader_test, device=device)
+
+# %%
+# 予測してみる
+img, _ = dataset_test[0]
+model.eval()
+with torch.no_grad():
+    prediction = model([img.to(device)])
+
+prediction
+# %%
+# permute(): 次元の順序を入れ替える
+Image.fromarray(img.mul(255).permute(1, 2, 0).byte().numpy())
+
+# %%
+Image.fromarray(prediction[0]['masks'][0, 0].mul(255).byte().cpu().numpy())
+
+# %%
+print(len(prediction[0]['masks']))
+print(prediction[0]['scores'])
+# %%
+Image.fromarray(prediction[0]['masks'][1, 0].mul(255).byte().cpu().numpy())
