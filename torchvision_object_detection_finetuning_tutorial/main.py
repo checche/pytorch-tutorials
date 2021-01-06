@@ -45,3 +45,19 @@ import datasets
 dataset = datasets.PennFudanDataset('./data/PennFudanPed')
 dataset[0]
 
+# %% [markdown]
+# ## Defining your model
+# Faster R-CNNは画像内の物体にたいして
+# - バウンディングボックスの予測
+# - オブジェクトのクラス予測
+#
+#
+# をおこなう
+# Mask R-CNNはFaster R-CNNに加えて各インスタンスの
+# セグメンテーションマスクも予測する。
+#
+# torchvisionのmodelzooで使用可能なモデルは、以下の2ケースでよく利用される。
+# 1. 訓練済みモデルの最終レイヤーをファインチューニングする。
+# 2. モデルのメイン部分(Backbone)を別のモデルに置き換えるとき。
+#
+# models.pyを参照
